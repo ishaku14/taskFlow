@@ -12,7 +12,8 @@ exports.getAllTasks = async (req, res) => {
 
 exports.createTask = async (req, res) => {
   try { 
-    const task = await taskServices.createTask(req.body);
+    const userId = req.user.id;
+    const task = await taskServices.createTask(userId, req.body);
     res.status(201).json(task);
   } catch (err) {
     res.status(err.status || 500).json({ error: err.message || "Internal server error: can't create task" });

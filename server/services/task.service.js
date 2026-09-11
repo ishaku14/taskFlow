@@ -7,7 +7,7 @@ exports.getAllTasks =async (category) => {
   return prisma.task.findMany({ where });
 }
 
-exports.createTask = async ({ title, description, priority, dueDate, category }) => {
+exports.createTask = async (userId, { title, description, priority, dueDate, category }) => {
   if (!title || !dueDate) {
     const err = new Error("Title and due date are required");
     err.status = 400;
@@ -21,7 +21,7 @@ exports.createTask = async ({ title, description, priority, dueDate, category })
         description,
         dueDate: new Date(dueDate),
         priority,
-        userId: 1
+        userId
       }
     });
 
@@ -41,7 +41,7 @@ exports.getTaskById = async (taskId) => {
   const task = await prisma.task.findUnique({
     where: { id: parseInt(taskId) }
   })
-  
+
   if (!task) {
     const err = new Error("Task not found");
     err.status = 404;
