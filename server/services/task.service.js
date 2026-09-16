@@ -1,10 +1,15 @@
 const prisma = require("../prisma/client");
 
-exports.getAllTasks =async (category) => {
-  // const where = category ? { category } : {};
-  const where = {}
+const ALLOWED_STATUSES = ["PENDING", "IN_PROGRESS", "COMPLETED"];
+
+exports.getAllTasks = async (userId, category) => {
+  const where = { userId: parseInt(userId) };
   if (category) where.category = category;
-  return prisma.task.findMany({ where });
+
+  return prisma.task.findMany({
+    where,
+    orderBy: { dueDate: "asc" }
+  });
 }
 
 exports.createTask = async (userId, { title, description, priority, dueDate, category }) => {
@@ -14,50 +19,82 @@ exports.createTask = async (userId, { title, description, priority, dueDate, cat
     throw err;
   }
 
-  try {
-    const task = await prisma.task.create({
-      data: {
-        title,
-        description,
-        dueDate: new Date(dueDate),
-        priority,
-        userId
-      }
-    });
-
-    return task;
-  } catch (err) {
+  if (!userId) {
+    const err = new Error("No user ID provided");
+    err.status = 400;
     throw err;
   }
+
+  return prisma.task.create({
+    data: {
+      title,
+      description,
+      dueDate: new Date(dueDate),
+      priority,
+      category,
+      userId: parseInt(userId)
+    }
+  });
 }
 
-exports.getTaskById = async (taskId) => {
-  if (!taskId) {
+exports.getTaskById = async (userId, taskId) => {
+  const id = parseInt(taskId);
+
+  if (isNaN(id)) {
     const err = new Error("Invalid task ID");
     err.status = 400;
     throw err;
   }
 
   const task = await prisma.task.findUnique({
-    where: { id: parseInt(taskId) }
-  })
+    where: { id }
+  });
 
   if (!task) {
     const err = new Error("Task not found");
     err.status = 404;
     throw err;
   }
+
+  if (task.userId !== parseInt(userId)) {
+    const err = new Error("Access denied");
+    err.status = 403;
+    throw err;
+  }
+
   return task;
 }
 
-exports.updateTask = async (taskId, { title, description, dueDate, priority, status, }) => {
-  if (!taskId) {
+exports.updateTask = async (userId, taskId, { title, description, dueDate, priority, status }) => {
+  const id = parseInt(taskId);
+
+  if (isNaN(id)) {
     const err = new Error("Invalid task ID");
     err.status = 400;
     throw err;
   }
 
-  let data = {}
+  const task = await prisma.task.findUnique({ where: { id } });
+
+  if (!task) {
+    const err = new Error("Task not found");
+    err.status = 404;
+    throw err;
+  }
+
+  if (task.userId !== parseInt(userId)) {
+    const err = new Error("Access denied");
+    err.status = 403;
+    throw err;
+  }
+
+  if (status !== undefined && !ALLOWED_STATUSES.includes(status)) {
+    const err = new Error(`Status must be one of: ${ALLOWED_STATUSES.join(", ")}`);
+    err.status = 400;
+    throw err;
+  }
+
+  const data = {};
   if (title !== undefined) data.title = title;
   if (description !== undefined) data.description = description;
   if (dueDate !== undefined) data.dueDate = new Date(dueDate);
@@ -65,20 +102,68 @@ exports.updateTask = async (taskId, { title, description, dueDate, priority, sta
   if (status !== undefined) data.status = status;
 
   return prisma.task.update({
-    where: { id: parseInt(taskId) },
+    where: { id },
     data
   });
 }
 
-exports.updateTaskStatus = async (taskId, status) => {
+exports.updateTaskStatus = async (userId, taskId, status) => {
+  const id = parseInt(taskId);
+
+  if (isNaN(id)) {
+    const err = new Error("Invalid task ID");
+    err.status = 400;
+    throw err;
+  }
+
+  if (!ALLOWED_STATUSES.includes(status)) {
+    const err = new Error(`Status must be one of: ${ALLOWED_STATUSES.join(", ")}`);
+    err.status = 400;
+    throw err;
+  }
+
+  const task = await prisma.task.findUnique({ where: { id } });
+
+  if (!task) {
+    const err = new Error("Task not found");
+    err.status = 404;
+    throw err;
+  }
+
+  if (task.userId !== parseInt(userId)) {
+    const err = new Error("Access denied");
+    err.status = 403;
+    throw err;
+  }
+
   return prisma.task.update({
-    where: { id: parseInt(taskId) },
-    data: { status: status }
+    where: { id },
+    data: { status }
   });
 }
 
-exports.deleteTask = (taskId) => {
-  return prisma.task.delete({
-    where: { id: parseInt(taskId) }
-  });
+exports.deleteTask = async (userId, taskId) => {
+  const id = parseInt(taskId);
+
+  if (isNaN(id)) {
+    const err = new Error("Invalid task ID");
+    err.status = 400;
+    throw err;
+  }
+
+  const task = await prisma.task.findUnique({ where: { id } });
+
+  if (!task) {
+    const err = new Error("Task not found");
+    err.status = 404;
+    throw err;
+  }
+
+  if (task.userId !== parseInt(userId)) {
+    const err = new Error("Access denied");
+    err.status = 403;
+    throw err;
+  }
+
+  return prisma.task.delete({ where: { id } });
 }
