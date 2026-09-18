@@ -37,8 +37,8 @@ exports.createTask = async (userId, { title, description, priority, dueDate, cat
   });
 }
 
-exports.getTaskById = async (userId, taskId) => {
-  const id = parseInt(taskId);
+exports.getTaskById = async (userId, id) => {
+  const taskId = parseInt(id);
 
   if (isNaN(id)) {
     const err = new Error("Invalid task ID");
@@ -47,7 +47,7 @@ exports.getTaskById = async (userId, taskId) => {
   }
 
   const task = await prisma.task.findUnique({
-    where: { id }
+    where: { taskId }
   });
 
   if (!task) {
@@ -65,16 +65,16 @@ exports.getTaskById = async (userId, taskId) => {
   return task;
 }
 
-exports.updateTask = async (userId, taskId, { title, description, dueDate, priority, status }) => {
-  const id = parseInt(taskId);
+exports.updateTask = async (userId, id, { title, description, dueDate, priority, status }) => {
+  const taskId = parseInt(id);
 
-  if (isNaN(id)) {
+  if (isNaN(taskId)) {
     const err = new Error("Invalid task ID");
     err.status = 400;
     throw err;
   }
 
-  const task = await prisma.task.findUnique({ where: { id } });
+  const task = await prisma.task.findUnique({ where: { taskId } });
 
   if (!task) {
     const err = new Error("Task not found");
@@ -102,7 +102,7 @@ exports.updateTask = async (userId, taskId, { title, description, dueDate, prior
   if (status !== undefined) data.status = status;
 
   return prisma.task.update({
-    where: { id },
+    where: { taskId },
     data
   });
 }
