@@ -5,7 +5,7 @@ export default function Dashboard () {
   return (
     <>
       <Header />
-      <Sidebar />
+      {/* <Sidebar /> */}
     </>
   );
 }
