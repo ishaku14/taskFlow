@@ -36,15 +36,15 @@ exports.login = async (email, password) => {
 
   if (!user) {
     const err = new Error("Invalid email or password");
-    err.status = 400;
+    err.status = 401;
     throw err;
   }
 
-  const passwordMatches = bcrypt.compare(password, user.password);
+  const passwordMatches = await bcrypt.compare(password, user.password);
 
   if (!passwordMatches) {
     const err = new Error("Invalid email or password");
-    err.status = 400;
+    err.status = 401;
     throw err;
   }
 

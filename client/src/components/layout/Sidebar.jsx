@@ -1,4 +1,7 @@
 import { ListChecks, Sun, CalendarDays, Star, Plus } from "lucide-react";
+import { useNavigate } from "react-router";
+import { useAuth } from "../../context/AuthContext";
+import { api } from "../../api/axios";
 
 const taskLinks = [
   { label: "All Tasks", icon: ListChecks, count: 24, active: true },
@@ -14,7 +17,22 @@ const projects = [
   { label: "Client Ops", color: "bg-rose-500" },
 ];
 
+
 export default function Sidebar({ isOpen, onClose }) {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      // const res = await api.post("/auth/logout");
+      logout();
+      navigate("/login");
+      console.log(res);
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  }
+
   return (
     <>
       {isOpen && (
@@ -87,12 +105,14 @@ export default function Sidebar({ isOpen, onClose }) {
         {/* Workspace footer */}
         <div className="border-t border-slate-100 px-4 py-4 flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-slate-800 text-white text-xs font-semibold flex items-center justify-center">
-            TF
+            LO
           </div>
-          <div className="leading-tight">
-            <p className="text-sm font-medium text-slate-800">Acme Workspace</p>
-            <p className="text-xs text-slate-400">Pro Plan</p>
-          </div>
+          <button 
+            type="button"
+            onClick={handleLogout}
+            className="leading-tight cursor-pointer text-[0.8rem] text-slate-600 font-medium hover:text-red-700 transition-colors">
+           Logout
+          </button>
         </div>
       </aside>
     </>

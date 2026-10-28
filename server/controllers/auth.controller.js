@@ -4,7 +4,10 @@ exports.register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
     const user = await authService.register(name, email, password);
-    res.status(201).json(user);
+    res.status(201).json({
+      message: "Account created successfully",
+      user: { id: user.id, name: user.name, email: user.email }
+    });
   } catch (err) {
     res.status(err.status || 500).json({ error: err.message || "Registration failed"});
   }
@@ -17,7 +20,8 @@ exports.login = async (req, res) => {
     res.cookie("jwt", user.refreshToken, {
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 1000,
-      secure: process.env.NODE_ENV === "production"
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax"
     });
     res.status(200).json({
       message: "Login successfull",

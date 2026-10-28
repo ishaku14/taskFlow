@@ -7,7 +7,10 @@ const taskRoute = require("./routes/task.routes");
 const categoryRoute = require("./routes/category.routes");
 const notificationRoute = require("./routes/notification.routes");
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.CLIENT_URL || "http://localhost:5173",
+  credentials: true,
+}));
 app.use(express.json());
 app.use(cookieParser());
 
