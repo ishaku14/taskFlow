@@ -1,4 +1,5 @@
 import { ListChecks, Sun, CalendarDays, Star, Plus } from "lucide-react";
+import { logout } from "../../api/logout";
 
 const taskLinks = [
   { label: "All Tasks", icon: ListChecks, count: 24, active: true },
@@ -91,9 +92,7 @@ export default function Sidebar({ isOpen, onClose }) {
           <div className="w-8 h-8 rounded-lg bg-slate-800 text-white text-xs font-semibold flex items-center justify-center">
             LO
           </div>
-          <button 
-            type="button"
-            className="leading-tight cursor-pointer text-[0.8rem] text-slate-600 font-medium hover:text-red-700 transition-colors">
+          <button type="button" className="leading-tight cursor-pointer text-[0.8rem] text-slate-600 font-medium hover:text-red-700 transition-colors" onClick={logout}>
            Logout
           </button>
         </div>
