@@ -4,11 +4,11 @@ import { Eye, CheckCircle2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "../schemas/authSchemas";
-import { useAuth } from "../context/AuthContext";
 import { api } from "../api/axios";
+import { useAuthStore } from "../stores/authStore";
 
 export default function Login() {
-  const { login } = useAuth();
+  const setAuth = useAuthStore(state => state.setAuth);
   const navigate = useNavigate();
   const location = useLocation();
   const registered = location.state?.registered;
@@ -16,7 +16,6 @@ export default function Login() {
   const {
     register,
     handleSubmit,
-    reset,
     setError,
     formState: { errors, isSubmitting },
   } = useForm({
@@ -31,10 +30,11 @@ export default function Login() {
     //submit details to the server
     try {
       const res = await api.post(`/auth/login`, data);
-      login(res.data.user, res.data.accessToken);
+      const { user, accessToken } = res.data;
+      setAuth(user, accessToken);
+      console.log(user, accessToken);
       navigate("/");
 
-      reset();
     } catch (err) {
       if (err.response) {
         setError("root.serverError", {

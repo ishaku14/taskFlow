@@ -1,7 +1,4 @@
 import { ListChecks, Sun, CalendarDays, Star, Plus } from "lucide-react";
-import { useNavigate } from "react-router";
-import { useAuth } from "../../context/AuthContext";
-import { api } from "../../api/axios";
 
 const taskLinks = [
   { label: "All Tasks", icon: ListChecks, count: 24, active: true },
@@ -19,19 +16,6 @@ const projects = [
 
 
 export default function Sidebar({ isOpen, onClose }) {
-  const { logout } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    try {
-      // const res = await api.post("/auth/logout");
-      logout();
-      navigate("/login");
-      console.log(res);
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-  }
 
   return (
     <>
@@ -109,7 +93,6 @@ export default function Sidebar({ isOpen, onClose }) {
           </div>
           <button 
             type="button"
-            onClick={handleLogout}
             className="leading-tight cursor-pointer text-[0.8rem] text-slate-600 font-medium hover:text-red-700 transition-colors">
            Logout
           </button>
