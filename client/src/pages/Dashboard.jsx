@@ -72,7 +72,7 @@ function Dashboard() {
         </section> 
 
         {/* Summary section */}
-        <Summary />
+        <Summary tasks={tasks} />
 
         <Tasks tasks={tasks} onStatusChange={handleStatusChange} />
       </main>

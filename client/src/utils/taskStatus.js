@@ -9,6 +9,10 @@ export const STATUS_CONFIG = {
 
 export function isOverdue(task) {
   if (task.status === "COMPLETED" || !task.dueDate) return false;
-  
   return dayjs(task.dueDate).isBefore(dayjs(), "day");
+}
+
+export function isDueToday(task) {
+  if (task.status === "COMPLETED" || !task.dueDate) return false;
+  return dayjs(task.dueDate).isSame(dayjs(), "day");
 }
