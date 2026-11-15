@@ -1,24 +1,49 @@
-import { X } from 'lucide-react'
+import { X } from 'lucide-react';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { taskSchema } from "../../schemas/taskSchema";
+import { api } from '../../api/axios';
 
 const priorities = ['Low', 'Medium', 'High']
-
 const labelClass = 'mb-1.5 block text-sm font-medium text-slate-600'
 const fieldClass =
   'w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent'
 
-export default function NewTaskModal({ onClose }) {
+export default function NewTaskModal({ onClose, setTasks }) {
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting }
+  } = useForm({ resolver: zodResolver(taskSchema)});
+
+  const onSubmit = async(data) => {
+    // Send to server
+    console.log(data)
+    try {
+      const newTask = await api.post("task", data);
+      setTasks(current => [newTask.data, ...current]);
+      onClose()
+    } catch (err) {
+      if (err.response) {
+        setError("root.serverError", {
+          message: err.response?.data.err || "Task creation failed. Try again"
+        });
+      } else {
+        setError("root.serverError", {
+          message: "Could not reach server. Try again."
+        });
+      }
+    }
+  }
+
   const handleBackdropClick = (e) => {
     if (e.target === e.currentTarget) onClose()
   }
 
   return (
     <div onClick={handleBackdropClick} className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="new-task-heading"
-        className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-xl bg-white p-5 shadow-xl sm:p-6"
-      >
+      <div role="dialog" aria-modal="true" aria-labelledby="new-task-heading" className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-xl bg-white p-5 shadow-xl sm:p-6">
         {/* Header */}
         <div className="mb-5 flex items-start justify-between">
           <div>
@@ -27,35 +52,27 @@ export default function NewTaskModal({ onClose }) {
             </h2>
             <p className="mt-0.5 text-sm text-slate-500">Add the details for your new task.</p>
           </div>
-          <button
-            type="button"
-            aria-label="Close"
-            onClick={onClose}
-            className="cursor-pointer rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-600"
-          >
+          <button type="button" aria-label="Close" onClick={onClose} className="cursor-pointer rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-600">
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Form */}
-        <form className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
           <div>
             <label htmlFor="task-title" className={labelClass}>Title</label>
-            <input id="task-title" type="text" placeholder="Audit authentication flows" className={fieldClass} />
+            <input {...register("title")} required id="task-title" type="text" placeholder="Audit authentication flows" className={fieldClass} />
+            {errors.title && <p className="text-red-700 text-[0.8rem]">{errors.title.message}</p>}
           </div>
 
           <div>
             <label htmlFor="task-description" className={labelClass}>Description</label>
-            <textarea
-              id="task-description"
-              rows={3}
-              placeholder="Add any notes or context"
-              className={`${fieldClass} resize-none`}
-            />
+            <textarea {...register("description")} id="task-description" rows={3} placeholder="Add any notes or context"className={`${fieldClass} resize-none`} />
+            {errors.description && <p className="text-red-700 text-[0.8rem]">{errors.description.message}</p>}
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
+            {/* <div>
               <label htmlFor="task-project" className={labelClass}>Project</label>
               <select id="task-project" className={fieldClass}>
                 <option>Engineering Sprint</option>
@@ -63,10 +80,11 @@ export default function NewTaskModal({ onClose }) {
                 <option>Design System</option>
                 <option>Client Ops</option>
               </select>
-            </div>
+            </div> */}
             <div>
               <label htmlFor="task-due" className={labelClass}>Due date</label>
-              <input id="task-due" type="date" className={fieldClass} />
+              <input {...register("dueDate")} required id="task-due" type="date" className={fieldClass} />
+              {errors.dueDate && <p className="text-red-700 text-[0.8rem]">{errors.dueDate.message}</p>}
             </div>
           </div>
 
@@ -76,9 +94,10 @@ export default function NewTaskModal({ onClose }) {
               {priorities.map((priority) => (
                 <label key={priority} className="cursor-pointer">
                   <input
+                    {...register("priority")}
                     type="radio"
                     name="priority"
-                    value={priority}
+                    value={priority.toUpperCase()}
                     defaultChecked={priority === 'Medium'}
                     className="peer sr-only"
                   />
@@ -89,6 +108,9 @@ export default function NewTaskModal({ onClose }) {
               ))}
             </div>
           </fieldset>
+          {errors.root?.serverError && (
+            <p className="text-red-700 text-[0.8rem]">{errors.root.serverError.message}</p>
+          )}
 
           {/* Footer */}
           <div className="flex justify-end gap-2 border-t border-slate-100 pt-4">
@@ -99,13 +121,14 @@ export default function NewTaskModal({ onClose }) {
               Cancel
             </button>
             <button
-              type="button"
+              type="submit"
+              disabled={isSubmitting}
               className="cursor-pointer rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-indigo-700">
-              Create task
+              {isSubmitting ? "Creating task" : "Create task"}
             </button>
           </div>
         </form>
       </div>
     </div>
-  )
+  );
 }

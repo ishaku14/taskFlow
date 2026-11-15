@@ -29,19 +29,16 @@ export default function Register() {
   const onSubmit = async (data) => {
     //submit to server
     try {
-      const res = await api.post("/auth/register", data);
+      await api.post("/auth/register", data);
       navigate("/login", { state: { registered: true } });
-      console.log(res.status);
-
+      
       reset();
     } catch (err) {
       if (err.response) {
         setError("root.serverError", {
           message: err.response?.data.err || "Registration failed. Try again"
         });
-        console.log(err.response)
       } else {
-        console.log("cannot reach server")
         setError("root.serverError", {
           message: "Could not reach server. Try again."
         });

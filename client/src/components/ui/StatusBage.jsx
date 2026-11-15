@@ -25,8 +25,8 @@ export default function StatusBage({ status, onChange }) {
 
   return (
     <div ref={ref} className="relative inline-block">
-      <button type="button" onClick={() => setOpen(o => !o)} className={`flex items-end gap-1 rounded-full px-2 py-0.5 text-xs ${current.classes}`}>
-        {current.label} <ChevronDown aria-hidden="true" size={12} />
+      <button type="button" onClick={() => setOpen(o => !o)} className={`flex items-end gap-1 rounded-full px-2 py-0.5 text-xs ${current?.classes}`}>
+        {current?.label} <ChevronDown aria-hidden="true" size={12} />
       </button>
 
       {open && (

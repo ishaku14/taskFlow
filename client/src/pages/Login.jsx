@@ -32,7 +32,6 @@ export default function Login() {
       const res = await api.post(`/auth/login`, data);
       const { user, accessToken } = res.data;
       setAuth({ user, accessToken });
-      console.log(user, accessToken);
       navigate("/");
 
     } catch (err) {

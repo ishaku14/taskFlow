@@ -12,11 +12,8 @@ function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [newTaskOpen, setNewTaskOpen] = useState(false);
   const user = useAuthStore(state => state.user);
-  console.log("User", user);
-  console.log("store:", useAuthStore.getState());
 
   const handleStatusChange = async (taskId, newStatus) => {
-    console.log("taskId received:", taskId, typeof taskId);
     const oldStatus = tasks.find(task => task.id === taskId).status;
 
     setTasks(current => current.map(task => (
@@ -39,7 +36,6 @@ function Dashboard() {
     const fetchTasks = async () => {
       try {
         const res = await api.get("/task");
-        console.log(res.data);
         setTasks(res.data);
       } catch (err) {
         console.error("Failed to fetch tasks:", err);
@@ -63,6 +59,7 @@ function Dashboard() {
 
       {newTaskOpen && (
         <NewTaskModal
+          setTasks={setTasks}
           onClose={() => setNewTaskOpen(prev => !prev)} 
         />
       )}
