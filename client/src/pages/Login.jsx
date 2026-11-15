@@ -31,14 +31,14 @@ export default function Login() {
     try {
       const res = await api.post(`/auth/login`, data);
       const { user, accessToken } = res.data;
-      setAuth(user, accessToken);
+      setAuth({ user, accessToken });
       console.log(user, accessToken);
       navigate("/");
 
     } catch (err) {
       if (err.response) {
         setError("root.serverError", {
-          message: err.response?.data.error || "Login failed. Try again"
+          message: err.response?.data.err || "Login failed. Try again"
         });
       } else {
         setError("root.serverError", {

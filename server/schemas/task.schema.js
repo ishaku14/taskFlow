@@ -4,7 +4,7 @@ const createTaskSchema = z.object({
   title: z.string().trim().min(2).max(200),
   description: z.string().trim().min(1).optional(),
   dueDate: z.date(),
-  status: z.enum(["PENDING", "ONGOING", "COMPLETED"]).default("PENDING"),
+  status: z.enum(["PENDING", "IN_PROGRESS", "COMPLETED"]).default("PENDING"),
   priority: z.enum(["LOW", "MEDIUM", "HIGH"]).default("MEDIUM"),
   categoryId: z.coerce.number().int().positive().optional(),
 });
@@ -14,7 +14,7 @@ const updateTaskSchema = z.object({
   title: z.string().trim().min(1).max(200).optional(),
   description: z.string().trim().min(1).optional(),
   dueDate: z.coerce.date().optional(),
-  status: z.enum(["PENDING", "ONGOING", "COMPLETED"]).optional(),
+  status: z.enum(["PENDING", "IN_PROGRESS", "COMPLETED"]).optional(),
   priority: z.enum(["LOW", "MEDIUM", "HIGH"]).optional()
 })
 

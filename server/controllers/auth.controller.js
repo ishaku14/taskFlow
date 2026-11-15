@@ -40,8 +40,8 @@ exports.login = async (req, res) => {
 exports.refresh = async (req, res) => {
   try {
     const refreshToken = req.cookies?.jwt;
-    const accessToken = await authService.refresh(refreshToken);
-    res.status(200).json({ "accessToken": accessToken });
+    const { user, accessToken } = await authService.refresh(refreshToken);
+    res.status(200).json({ user, "accessToken": accessToken });
   } catch (err) {
     res.status(err.status || 500).json({ error: err.message });
   }

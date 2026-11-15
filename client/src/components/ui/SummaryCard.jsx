@@ -15,7 +15,7 @@ export default function SummaryCard({ icon, accentColor, title, value, descripti
       </div>
 
       <p className="text-[0.7rem]">
-        <span className={`text-${accentColor}-700`}>4 new</span> added this sprint
+        {/* <span className={`text-${accentColor}-700`}>4 new</span> added this sprint */}
       </p>
     </div>
   );

@@ -131,7 +131,9 @@ exports.refresh = async (refreshToken) => {
     { expiresIn: '1h' }
   );
 
-  return accessToken;
+  const { password: _, ...safeUser } = user;
+
+  return { user: safeUser, accessToken };
 }
 
 exports.logout = async (refreshToken) => {

@@ -37,7 +37,7 @@ export default function Register() {
     } catch (err) {
       if (err.response) {
         setError("root.serverError", {
-          message: err.response?.data.error || "Registration failed. Try again"
+          message: err.response?.data.err || "Registration failed. Try again"
         });
         console.log(err.response)
       } else {

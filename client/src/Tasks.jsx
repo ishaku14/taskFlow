@@ -1,38 +1,7 @@
 import TaskCard from "./components/ui/TaskCard";
 import Category from "./components/ui/Category";
 
-export default function Tasks() {
-  const tasks = [
-    { 
-      id: 1,
-      title: "Audit authentication and refresh flows",
-      description: "Investigate edge cases with sliding window expiration and update",
-      dueDate: "2026-10-06",
-      priority: "HIGH"
-    },
-    { 
-      id: 2,
-      title: "Finalize Q3 product roadmap presentation deck",
-      description: "Consolidate key metrics, engineering capacity projections",
-      dueDate: "2026-10-12",
-      priority: "HIGH",
-    },
-    { 
-      id: 3,
-      title: "Client review meeting preparations - Ops flow",
-      description: "Generate sprint summary report and prepare questions for weekly meeting",
-      dueDate: "2026-11-02",
-      priority: "LOW"
-    },
-    { 
-      id: 4,
-      title: "Update desing tokens in tailwind configuration",
-      description: "Export latest color palletes and types sxales from Figma tokens studios",
-      dueDate: "2026-10-31",
-      priority: "MEDIUM"
-    }
-  ];
-
+export default function Tasks({ tasks, onStatusChange }) {
   return (
     <>
       {/* Task Header */}
@@ -52,14 +21,7 @@ export default function Tasks() {
       {/* Task card container */}
       <div className="flex flex-col gap-3">
         {tasks.map((task) => (
-          <TaskCard
-            completed={task.completed}
-            key={task.id}
-            title={task.title}
-            description={task.description}
-            dueDate={task.dueDate}
-            priority={task.priority}
-          />
+          <TaskCard key={task.id} task={task} onStatusChange={onStatusChange} />
         ))}
       </div>
     </>
