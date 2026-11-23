@@ -6,12 +6,21 @@ import Sidebar from "../components/layout/Sidebar";
 import Summary from "../components/ui/Summary";
 import NewTaskModal from '../components/ui/NewTaskModal';
 import Tasks from "../Tasks";
+import { FILTERS } from "../utils/taskStatus"; 
 
 function Dashboard() {
   const [tasks, setTasks] = useState([]);
+  const [activeFilter, setActiveFilter] = useState("ALL");
+
+  const currentFilter = FILTERS.find((f) => f.key === activeFilter);
+  const visibleTasks = tasks.filter(currentFilter.test);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [newTaskOpen, setNewTaskOpen] = useState(false);
   const user = useAuthStore(state => state.user);
+
+  function handleFilterChange(e) {
+    setActiveFilter(e.target.value);
+  }
 
   const handleStatusChange = async (taskId, newStatus) => {
     const oldStatus = tasks.find(task => task.id === taskId).status;
@@ -53,6 +62,7 @@ function Dashboard() {
       />
 
       <Sidebar 
+        tasks={tasks}
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />
@@ -74,7 +84,7 @@ function Dashboard() {
         {/* Summary section */}
         <Summary tasks={tasks} />
 
-        <Tasks tasks={tasks} onStatusChange={handleStatusChange} />
+        <Tasks tasks={visibleTasks} onStatusChange={handleStatusChange} activeFilter={activeFilter} setActiveFilter={setActiveFilter} handleFilterChange={handleFilterChange} />
       </main>
     </div>
   );

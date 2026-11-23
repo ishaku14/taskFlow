@@ -1,7 +1,7 @@
 import TaskCard from "./components/ui/TaskCard";
 import Category from "./components/ui/Category";
 
-export default function Tasks({ tasks, onStatusChange }) {
+export default function Tasks({ tasks, onStatusChange, setActiveFilter, activeFilter, handleFilterChange }) {
   return (
     <>
       {/* Task Header */}
@@ -10,12 +10,12 @@ export default function Tasks({ tasks, onStatusChange }) {
           <div className="flex gap-1">
             <h2 className="font-bold">Active Workstream</h2>
             <button className="bg-purple-300 text-[0.7rem] text-purple-900 font-bold px-4 py-1 rounded-3xl">
-              5 tasks
+              {tasks.length}
             </button>
           </div>
         </div>
 
-        <Category />
+        <Category activeFilter={activeFilter} setActiveFilter={setActiveFilter} handleFilterChange={handleFilterChange} />
       </div>
 
       {/* Task card container */}

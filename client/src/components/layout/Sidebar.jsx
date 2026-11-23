@@ -8,14 +8,13 @@ const taskLinks = [
   { label: "Important", icon: Star, count: 3 },
 ];
 
-const projects = [
-  { label: "Product Launch", color: "bg-indigo-500" },
-  { label: "Design System", color: "bg-emerald-500" },
-  { label: "Engineering Sprint", color: "bg-amber-500" },
-  { label: "Client Ops", color: "bg-rose-500" },
-];
-
-
+// const projects = [
+//   { label: "Product Launch", color: "bg-indigo-500" },
+//   { label: "Design System", color: "bg-emerald-500" },
+//   { label: "Engineering Sprint", color: "bg-amber-500" },
+//   { label: "Client Ops", color: "bg-rose-500" },
+// ];
+ 
 export default function Sidebar({ isOpen, onClose }) {
 
   return (
@@ -62,7 +61,7 @@ export default function Sidebar({ isOpen, onClose }) {
           </nav>
 
           {/* Projects section */}
-          <div className="flex items-center justify-between px-2 mt-8 mb-2">
+          {/* <div className="flex items-center justify-between px-2 mt-8 mb-2">
             <p className="text-xs font-semibold text-slate-400 tracking-wide">
               PROJECTS
             </p>
@@ -84,7 +83,7 @@ export default function Sidebar({ isOpen, onClose }) {
                 {label}
               </button>
             ))}
-          </nav>
+          </nav> */}
         </div>
 
         {/* Workspace footer */}

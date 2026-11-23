@@ -37,7 +37,7 @@ export default function Login() {
     } catch (err) {
       if (err.response) {
         setError("root.serverError", {
-          message: err.response?.data.err || "Login failed. Try again"
+          message: err.response?.data.error || "Login failed. Try again"
         });
       } else {
         setError("root.serverError", {

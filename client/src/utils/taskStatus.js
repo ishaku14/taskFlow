@@ -16,3 +16,11 @@ export function isDueToday(task) {
   if (task.status === "COMPLETED" || !task.dueDate) return false;
   return dayjs(task.dueDate).isSame(dayjs(), "day");
 }
+
+export const FILTERS = [
+  { key: "ALL", label: "All Tasks", test: () => true },
+  { key: "IN_PROGRESS", label: "In Progress", test: (t) => t.status === "IN_PROGRESS" },
+  { key: "PENDING", label: "Pending", test: (t) => t.status === "PENDING" },
+  { key: "OVERDUE", label: "Overdue", test: isOverdue },
+  { key: "DONE", label: "Done", test: (t) => t.status === "COMPLETED" },
+];
